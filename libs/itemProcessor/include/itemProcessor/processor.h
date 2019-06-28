@@ -18,6 +18,9 @@
  * Also, when the user request for the data with the accessor, if the items are not processed at this time, the call
  * will block until the data is available. If the user tries to access the processed items before calling completeSet()
  * the method will throw.
+ *
+ * Although I do not like the design, what I have at work right now is that we have to call a reset() method before
+ * being able to add items.
  */
 class ITEMPROCESSOR_EXPORT ItemProcessor
 {
@@ -25,6 +28,7 @@ public:
     ItemProcessor();
     ~ItemProcessor();
 
+    void reset();
     void addItem(int item);
     void completeSet();
 

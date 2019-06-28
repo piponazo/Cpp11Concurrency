@@ -11,9 +11,6 @@ struct ItemProcessor::Pimpl {
     ~Pimpl()
     {
         setCompleted = true;
-//        if (future.valid()) {
-//            future.wait();
-//        }
     }
 
     void processingThread()
@@ -22,7 +19,7 @@ struct ItemProcessor::Pimpl {
             std::unique_lock<std::mutex> lk(mut);
             cond.wait(lk, [this] { return !dataInput.empty(); });
 
-            auto data=dataInput.front();
+            auto data = dataInput.front();
             dataInput.pop();
             lk.unlock();
 
@@ -31,22 +28,39 @@ struct ItemProcessor::Pimpl {
         }
     }
 
-    void startProcessing(int item)
+    void reset()
+    {
+        { // Empty input data to finish processing thread ASAP
+            std::lock_guard<std::mutex> lk(mut);
+            while (!dataInput.empty()) {
+                dataInput.pop();
+            }
+        }
+        if (future.valid()) {
+            future.wait();
+        }
+        dataOutput.clear();
+        setCompleted = false;
+        futureInitialized = false;
+    }
+
+    void addItem(int item)
     {
         if (setCompleted) {
-            dataOutput.clear(); // This could happen with a reset() call
-            setCompleted = false;
-            future = std::async(std::launch::async, &Pimpl::processingThread, this);
+            throw std::runtime_error("need to call reset() before adding items");
         }
+
+        if (!futureInitialized) {
+            future = std::async(std::launch::async, &Pimpl::processingThread, this);
+            futureInitialized = true;
+        }
+
         std::lock_guard<std::mutex> lk(mut);
         dataInput.push(item);
         cond.notify_one();
     }
 
-    void completeSet()
-    {
-        setCompleted = true;
-    }
+    void completeSet() { setCompleted = true; }
 
     const std::vector<int>& data() const
     {
@@ -66,6 +80,7 @@ struct ItemProcessor::Pimpl {
     std::vector<int> dataOutput;
 
     bool setCompleted{true};
+    bool futureInitialized{false};
 };
 
 ItemProcessor::ItemProcessor()
@@ -75,9 +90,14 @@ ItemProcessor::ItemProcessor()
 
 ItemProcessor::~ItemProcessor() {}
 
+void ItemProcessor::reset()
+{
+    _p->reset();
+}
+
 void ItemProcessor::addItem(int item)
 {
-    _p->startProcessing(item);
+    _p->addItem(item);
 }
 
 void ItemProcessor::completeSet()
