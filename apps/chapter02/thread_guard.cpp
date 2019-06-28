@@ -27,7 +27,7 @@ void functionThread(int & localVar)
 int main()
 {
     int someLocalVar = 4;
-    thread t {functionThread, someLocalVar};
+    thread t {functionThread, std::ref(someLocalVar)};
     ThreadGuard g(t);
     return EXIT_SUCCESS;
 }
