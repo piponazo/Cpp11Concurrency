@@ -4,6 +4,8 @@ if (EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     conan_basic_setup(NO_OUTPUT_DIRS KEEP_RPATHS TARGETS)
 endif()
 
-find_package(Catch2 REQUIRED)
-include(Catch REQUIRED)
-include(CTest)
+find_package(Catch2 CONFIG)
+
+if (Catch2_FOUND)
+    include(Catch REQUIRED)
+endif()
