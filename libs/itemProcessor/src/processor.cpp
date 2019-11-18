@@ -8,16 +8,16 @@
 struct ItemProcessor::Pimpl {
     Pimpl() {}
 
-    ~Pimpl()
-    {
-        setCompleted = true;
-    }
+    ~Pimpl() { setCompleted = true; }
 
     void processingThread()
     {
-        while (!setCompleted || !dataInput.empty()) {
+        while (!setCompleted || (setCompleted && !dataInput.empty())) {
             std::unique_lock<std::mutex> lk(mut);
-            cond.wait(lk, [this] { return !dataInput.empty(); });
+            cond.wait(lk, [this] { return !dataInput.empty() || setCompleted; });
+
+            if (dataInput.empty())
+                break;
 
             auto data = dataInput.front();
             dataInput.pop();
@@ -60,7 +60,11 @@ struct ItemProcessor::Pimpl {
         cond.notify_one();
     }
 
-    void completeSet() { setCompleted = true; }
+    void completeSet()
+    {
+        setCompleted = true;
+        cond.notify_one();
+    }
 
     const std::vector<int>& data() const
     {
