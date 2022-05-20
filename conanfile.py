@@ -5,5 +5,5 @@ class ConanDependencies(ConanFile):
     generators = 'cmake'
 
     def requirements(self):
-        self.requires('Catch2/2.9.1@catchorg/stable')
-        self.requires('trompeloeil/v34@rollbear/stable')
+        self.requires('catch2/2.13.9')
+        self.requires('trompeloeil/42')
