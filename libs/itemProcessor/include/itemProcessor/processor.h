@@ -22,19 +22,18 @@
  * Although I do not like the design, what I have at work right now is that we have to call a reset() method before
  * being able to add items.
  */
-class ITEMPROCESSOR_EXPORT ItemProcessor
-{
-public:
-    ItemProcessor();
-    ~ItemProcessor();
+class ITEMPROCESSOR_EXPORT ItemProcessor {
+ public:
+  ItemProcessor();
+  ~ItemProcessor();
 
-    void reset();
-    void addItem(int item);
-    void completeSet();
+  void reset();
+  void addItem(int item);
+  void completeSet();
 
-    const std::vector<int>& data() const;
+  const std::vector<int>& data() const;
 
-private:
-    struct Pimpl;
-    std::unique_ptr<Pimpl> _p;
+ private:
+  struct Pimpl;
+  std::unique_ptr<Pimpl> _p;
 };

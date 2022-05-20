@@ -1,38 +1,24 @@
-BasedOnStyle: LLVM
-Language: Cpp
-Standard: Cpp11
-
-AccessModifierOffset: -4
+---
+# Indentation for all files
 ColumnLimit: 120
-IndentWidth: 4
-TabWidth: 4
-ContinuationIndentWidth: 4
-UseTab: Never
-NamespaceIndentation: None
 
+# C++ Options
+Language: Cpp
+BasedOnStyle: Google
+
+# Force pointers to the type for C++.
+DerivePointerAlignment: false
 PointerAlignment: Left
-AlignAfterOpenBracket: Align
-AlignOperands: true
-AlignTrailingComments: true
 
-AlwaysBreakTemplateDeclarations: true
-BreakBeforeBraces: Linux
-BreakConstructorInitializers: BeforeComma
+# Useful for sorting the project inclusions and standard library inclusions separately 
+IncludeBlocks: Preserve
 
-BinPackArguments: false
-BinPackParameters: false
-ExperimentalAutoDetectBinPacking: false
+# Constructor initializers better formatted in presence of preprocessor conditions (see image.cpp)
+BreakConstructorInitializers: AfterColon
 
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortFunctionsOnASingleLine: Inline
-AllowShortBlocksOnASingleLine: false
+# Do not allow SingleLine statements (to improve coverage statistics)
+AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 
-BraceWrapping:
-    AfterStruct: true
-    AfterClass: true
-    AfterFunction: true
-    AfterControlStatement: false
-    AfterEnum: true
-    AfterNamespace: true
+...
